@@ -1,0 +1,27 @@
+name: Daily Diamond Price Check
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # UTC 01:00 = 台灣時間 09:00
+  workflow_dispatch:      # 允許手動觸發測試
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4
+
+    - name: Run Scraper
+      env:
+        LINE_TOKEN: ${{ secrets.LINE_TOKEN }} # 請在 Repo Settings > Secrets 設定 Token
+      run: python main.py
